@@ -1,4 +1,4 @@
-# Tilburg University- Introduction to deep learning
+# Tilburg University - Introduction to deep learning
 
 
 # data format:
