@@ -49,7 +49,7 @@ class Reidentification_From_Voice(Dataset):
 
 class DataLD(object):
 
-    def __init__(self, data_path, preprocessing_function):
+    def __init__(self, data_path):
         self.dataset = Reidentification_From_Voice(data_path)
 
     def get_loader(self, shuf= True, batch_size = 64):
