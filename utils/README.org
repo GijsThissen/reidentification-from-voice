@@ -1,4 +1,5 @@
 * Data_Loader
 Currently creates ~4mil pairs of recordings (thats all the combinations of training recordings we were given)
 
-We can pass a preprocesser object to the DataLD and it will apply it according to how the torchaudio preprocessor has been defined
+We can pass a preprocesser object to the DataLD and it will apply it according to how the torchaudio preprocessor has been defined ( actually not yet but I think thats a good idea)
+
