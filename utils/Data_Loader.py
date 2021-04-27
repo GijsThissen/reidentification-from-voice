@@ -1,7 +1,5 @@
-import os
 import pickle
 import torch
-import torch.autograd as autograd
 from torch.utils.data.dataset import Dataset
 from torch.utils.data.dataloader import DataLoader
 import numpy as np
