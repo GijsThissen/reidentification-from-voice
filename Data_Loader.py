@@ -11,6 +11,7 @@ import itertools.combinations
 
 
 class Reidentification_From_Voice(Dataset):
+    
     def __init__(self, data_path):
         with open(data_path, 'rb') as handle:
             self.data = pickle.load(handle)
@@ -19,19 +20,9 @@ class Reidentification_From_Voice(Dataset):
         self.training_pairs = itertools.combinations_with_replacement(indices, 2)
         self.total_pairs = len(self.training_pairs)
 
-
-
-        # self.src_sents = open(src_filename).readlines()
-        # self.trg_sents = open(trg_filename).readlines()
-        # self.labels = open(labels_filename).readlines()
-
-        # self.total_sents = len(self.labels)
-        # self.bpe_model = spm.SentencePieceProcessor(model_file= bpe_model_path)
-
     def __getitem__(self, idx):
         """Returns three Tensors: rec_1, rec_2 and label."""
-
-
+        
         idx_0, idx_1  = self.training_pairs[idx]
 
         rec_0 = torch.from_numpy(data[0][idx_1])
