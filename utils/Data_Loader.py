@@ -3,18 +3,18 @@ import torch
 from torch.utils.data.dataset import Dataset
 from torch.utils.data.dataloader import DataLoader
 import numpy as np
-import itertools.combinations
-
+import itertools
 
 
 
 class Reidentification_From_Voice(Dataset):
-    def __init__(self, data_path,preprocessing_function, deviceid):
+    def __init__(self, data_path, preprocessing_function, deviceid):
         with open(data_path, 'rb') as handle:
             self.data = pickle.load(handle)
 
-        indices = [ i for i in range(len(data[1]))]
-        self.training_pairs = itertools.combinations(indices, 2)
+        indices = [ i for i in range(len(self.data[1]))]
+        self.training_pairs = list(itertools.combinations(indices, 2))
+        print(len(self.training_pairs))
         self.total_pairs = len(self.training_pairs)
         self.deviceid = deviceid
         self.preprocessing_function = preprocessing_function
@@ -33,18 +33,23 @@ class Reidentification_From_Voice(Dataset):
 
 
         idx_0, idx_1  = self.training_pairs[idx]
-        lbl_0 = data[1][idx_0]
-        lbl_1 = data[1][idx_1]
+        lbl_0 = self.data[1][idx_0]
+        lbl_1 = self.data[1][idx_1]
         if self.deviceid == -1:
-            rec_0 = self.preprocessing_function.forward(torch.from_numpy(data[0][idx_0]))
-            rec_1 = self.preprocessing_function.forward(torch.from_numpy(data[0][idx_1]))
-            label = torch.BoolTensor(1 if lbl_0 == lbl_1 else 0)
+            rec_0 = self.preprocessing_function.forward(torch.from_numpy(self.data[0][idx_0]))
+            rec_1 = self.preprocessing_function.forward(torch.from_numpy(self.data[0][idx_1]))
+            label = True if lbl_0 == lbl_1 else False
         else:
-            rec_0 = self.preprocessing_function.forward(torch.from_numpy(data[0][idx_0]).cuda())
-            rec_1 = self.preprocessing_function.forward(torch.from_numpy(data[0][idx_1]).cuda())
-            label = torch.cuda.BoolTensor(1 if lbl_0 == lbl_1 else 0)
+            rec_0 = self.preprocessing_function.forward(torch.from_numpy(self.data[0][idx_0]).cuda())
+            rec_1 = self.preprocessing_function.forward(torch.from_numpy(self.data[0][idx_1]).cuda())
+            label = True if lbl_0 == lbl_1 else False
 
 
+        print(rec_0.shape)
+        print(rec_1.shape)
+        print(lbl_0)
+        print(lbl_1)
+        print(label)
         return rec_0, rec_1, label
 
     def __len__(self):
@@ -56,7 +61,7 @@ class DataLD(object):
     def __init__(self, data_path, preprocessing_function, deviceid = -1):
         self.dataset = Reidentification_From_Voice(data_path, preprocessing_function, deviceid)
 
-    def get_loader(self, shuf= True, batch_size = 64):
+    def get_loader(self, shuf= True, batch_size = 80):
 
         data_loader = DataLoader(dataset = self.dataset,
                                  batch_size = batch_size,
