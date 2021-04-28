@@ -14,7 +14,7 @@ class Reidentification_From_Voice(Dataset):
             self.data = pickle.load(handle)
 
         indices = [ i for i in range(len(data[1]))]
-        self.training_pairs = itertools.combinations_with_replacement(indices, 2)
+        self.training_pairs = itertools.combinations(indices, 2)
         self.total_pairs = len(self.training_pairs)
 
 
