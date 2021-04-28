@@ -9,13 +9,15 @@ import itertools.combinations
 
 
 class Reidentification_From_Voice(Dataset):
-    def __init__(self, data_path):
+    def __init__(self, data_path,preprocessing_function, deviceid):
         with open(data_path, 'rb') as handle:
             self.data = pickle.load(handle)
 
         indices = [ i for i in range(len(data[1]))]
         self.training_pairs = itertools.combinations(indices, 2)
         self.total_pairs = len(self.training_pairs)
+        self.deviceid = deviceid
+        self.preprocessing_function = preprocessing_function
 
 
 
@@ -31,15 +33,19 @@ class Reidentification_From_Voice(Dataset):
 
 
         idx_0, idx_1  = self.training_pairs[idx]
-
-        rec_0 = torch.from_numpy(data[0][idx_1])
         lbl_0 = data[1][idx_0]
+        lbl_1 = data[1][idx_1]
+        if self.deviceid == -1:
+            rec_0 = self.preprocessing_function.forward(torch.from_numpy(data[0][idx_0]))
+            rec_1 = self.preprocessing_function.forward(torch.from_numpy(data[0][idx_1]))
+            label = torch.BoolTensor(1 if lbl_0 == lbl_1 else 0)
+        else:
+            rec_0 = self.preprocessing_function.forward(torch.from_numpy(data[0][idx_0]).cuda())
+            rec_1 = self.preprocessing_function.forward(torch.from_numpy(data[0][idx_1]).cuda())
+            label = torch.cuda.BoolTensor(1 if lbl_0 == lbl_1 else 0)
 
-        rec_1 = torch.from_numpy(data[0][idx_2])
-        lbl_1 = data[1][idx_0]
 
-        label = 1 if lbl_0 == lbl_1 else 0
-        return rec_0, rec_1, torch.BoolTensor(label)
+        return rec_0, rec_1, label
 
     def __len__(self):
         return self.total_pairs
@@ -47,8 +53,8 @@ class Reidentification_From_Voice(Dataset):
 
 class DataLD(object):
 
-    def __init__(self, data_path, preprocessing_function):
-        self.dataset = Reidentification_From_Voice(data_path)
+    def __init__(self, data_path, preprocessing_function, deviceid = -1):
+        self.dataset = Reidentification_From_Voice(data_path, preprocessing_function, deviceid)
 
     def get_loader(self, shuf= True, batch_size = 64):
 
