@@ -36,12 +36,24 @@ class Reidentification_From_Voice(Dataset):
         lbl_0 = self.data[1][idx_0]
         lbl_1 = self.data[1][idx_1]
         if self.deviceid == -1:
-            rec_0 = self.preprocessing_function.forward(torch.from_numpy(self.data[0][idx_0]))
-            rec_1 = self.preprocessing_function.forward(torch.from_numpy(self.data[0][idx_1]))
+            rec_0 = torch.from_numpy(self.data[0][idx_0])
+            rec_1 = torch.from_numpy(self.data[0][idx_1])
+
+            rec_0 = self.preprocessing_function.forward(rec_0)
+            rec_1 = self.preprocessing_function.forward(rec_1)
+
+            rec_0 = rec_0.reshape(1, 1, rec_0.shape[0], rec_0.shape[1])
+            rec_1 = rec_1.reshape(1, 1, rec_1.shape[0], rec_1.shape[1])
+
             label = True if lbl_0 == lbl_1 else False
         else:
-            rec_0 = self.preprocessing_function.forward(torch.from_numpy(self.data[0][idx_0]).cuda())
-            rec_1 = self.preprocessing_function.forward(torch.from_numpy(self.data[0][idx_1]).cuda())
+
+            rec_0 = torch.from_numpy(self.data[0][idx_0]).cuda()
+            rec_1 = torch.from_numpy(self.data[0][idx_1]).cuda()
+            rec_1 = self.preprocessing_function.forward(rec_1).cuda()
+            rec_0 = rec_0.reshape(1, 1, rec_0.shape[0], rec_0.shape[1]).cuda()
+            rec_1 = rec_1.reshape(1, 1, rec_1.shape[0], rec_1.shape[1]).cuda()
+
             label = True if lbl_0 == lbl_1 else False
 
 
