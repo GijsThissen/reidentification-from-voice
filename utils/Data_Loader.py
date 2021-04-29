@@ -50,7 +50,10 @@ class Reidentification_From_Voice(Dataset):
 
             rec_0 = torch.from_numpy(self.data[0][idx_0]).cuda()
             rec_1 = torch.from_numpy(self.data[0][idx_1]).cuda()
+
+            rec_0 = self.preprocessing_function.forward(rec_0).cuda()
             rec_1 = self.preprocessing_function.forward(rec_1).cuda()
+
             rec_0 = rec_0.reshape(1, rec_0.shape[0], rec_0.shape[1]).cuda()
             rec_1 = rec_1.reshape(1, rec_1.shape[0], rec_1.shape[1]).cuda()
 
