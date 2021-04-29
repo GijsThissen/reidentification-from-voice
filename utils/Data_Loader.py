@@ -65,7 +65,7 @@ class Reidentification_From_Voice(Dataset):
         # print(lbl_0)
         # print(lbl_1)
         # print(label)
-        # return rec_0, rec_1, label
+        return rec_0, rec_1, label
 
     def __len__(self):
         return self.total_pairs
