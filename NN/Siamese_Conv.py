@@ -28,29 +28,33 @@ class SiameseNetwork(nn.Module):
     def __init__(self):
        super(SiameseNetwork, self).__init__()
        self.cnn = nn.Sequential(
+           # layers of convolution
            nn.Conv2d(in_channels=1, out_channels=32, kernel_size=(3,3)),
+           nn.BatchNorm2d(32),
            nn.ReLU(inplace=True),
            nn.MaxPool2d(kernel_size=2),
 
            nn.Conv2d(in_channels=32, out_channels=64, kernel_size=(3,3)),
+           nn.BatchNorm2d(64),
            nn.ReLU(inplace=True),
-           #nn.MaxPool2d(kernel_size=2),
+           nn.MaxPool2d(kernel_size=2),
            #nn.Dropout2d(p=0.3),
 
-           #nn.Conv2d(in_channels=64, out_channels=64, kernel_size=(3,3)),
-           #nn.ReLU(inplace=True),
+           nn.Conv2d(in_channels=64, out_channels=64, kernel_size=(3,3)),
+           nn.ReLU(inplace=True),
+           nn.MaxPool2d(kernel_size=2),
            )
 
-       # dense layers
+       # fully connected layers
        self.fc = nn.Sequential(
 
        nn.Flatten(),
 
-       nn.Linear(in_features = 64*17*25, out_features = 10, bias = True),
-       #nn.ReLU(inplace=True),
+       nn.Linear(in_features = 960, out_features = 128, bias = True),
+       nn.ReLU(inplace=True),
+       nn.Dropout2d(p=0.3, inplace = True),
 
-       #nn.Linear(in_features=64, out_features=10, bias=True),
-       nn.Sigmoid()
+       nn.Linear(in_features=128, out_features=10, bias=True),
        )
 
     def forward_once(self, inp):
@@ -64,8 +68,8 @@ class SiameseNetwork(nn.Module):
     def forward(self, inp1, inp2):
         left = self.forward_once(inp1)
         right = self.forward_once(inp2)
-        print(torch.Size(left))
-        print(torch.Size(right))
+        print(left.shape)
+        print(right.shape)
         # default is euclidian
         distance = F.pairwise_distance(left, right)
         return distance
