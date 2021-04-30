@@ -7,7 +7,7 @@ current_dir = os.getcwd()
 data_path = current_dir+"/data/raw_data.pkl"
 
 # preprocessing function to use when loading the data
-mfcc = torchaudio.transforms.MFCC(sample_rate =  44100, log_mels=True)
+mfcc = torchaudio.transforms.MFCC(sample_rate =  11025, log_mels=True)
 
 # loading the data
 train_data = DL.DataLD(data_path, mfcc)
