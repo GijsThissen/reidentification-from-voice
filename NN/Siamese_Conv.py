@@ -2,6 +2,8 @@ import torch
 from torch import nn
 import scipy.spatial
 from torchsummary import summary
+import torch.nn.functional as F
+import torch
 
 
 class ContrastiveLoss(nn.Module):
@@ -11,8 +13,14 @@ class ContrastiveLoss(nn.Module):
         self.margin = margin
 
     def forward(self, distance, label):
-        loss_contrastive = torch.mean((1.0-label) * torch.pow(distance, 2) + (label) *torch.pow(torch.clamp(self.margin - distance, min=0.0), 2))
+        # LABEL == 0 if the pair is positive, else 0
+        pos = (1-label) * pow(distance, 2)
+        neg = (label) * torch.pow(torch.clamp(self.margin - distance, min=0.0), 2)
+        loss_contrastive = torch.mean( pos + neg )
+
         return loss_contrastive
+
+
 
 
 class SiameseNetwork(nn.Module):
@@ -57,7 +65,7 @@ class SiameseNetwork(nn.Module):
         left = self.forward_once(inp1)
         right = self.forward_once(inp2)
         # default is euclidian
-        distance = scipy.spatial.distance.cdist(left.detach().numpy(), right.detach().numpy())
+        distance = F.pairwise_distance(left, right)
         return distance
 
 
