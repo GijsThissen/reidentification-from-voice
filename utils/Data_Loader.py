@@ -45,7 +45,7 @@ class Reidentification_From_Voice(Dataset):
             rec_0 = rec_0.reshape(1, rec_0.shape[0], rec_0.shape[1])
             rec_1 = rec_1.reshape(1, rec_1.shape[0], rec_1.shape[1])
 
-            label = 0 if lbl_0 == lbl_1 else 1
+            label = 0 if id_0 == id_1 else 1
         else:
 
             rec_0 = torch.from_numpy(self.data[0][idx_0]).cuda()
@@ -57,7 +57,7 @@ class Reidentification_From_Voice(Dataset):
             rec_0 = rec_0.reshape(1, rec_0.shape[0], rec_0.shape[1]).cuda()
             rec_1 = rec_1.reshape(1, rec_1.shape[0], rec_1.shape[1]).cuda()
 
-            label = 0 if lbl_0 == lbl_1 else 1
+            label = 0 if id_0 == id_1 else 1
 
 
         # print(rec_0.shape)
@@ -65,7 +65,7 @@ class Reidentification_From_Voice(Dataset):
         # print(lbl_0)
         # print(lbl_1)
         # print(label)
-        return rec_0, id_0, rec_1, id_1, label
+        return rec_0, rec_1, label
 
     def __len__(self):
         return self.total_pairs

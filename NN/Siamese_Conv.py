@@ -64,15 +64,8 @@ class SiameseNetwork(nn.Module):
     def forward(self, inp1, inp2):
         left = self.forward_once(inp1)
         right = self.forward_once(inp2)
-        print(torch.Size(left))
-        print(torch.Size(right))
+        # print(torch.Size(left))
+        # print(torch.Size(right))
         # default is euclidian
         distance = F.pairwise_distance(left, right)
         return distance
-
-
-
-
-
-
-
