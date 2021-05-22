@@ -13,7 +13,7 @@ class ContrastiveLoss(nn.Module):
         self.margin = margin
 
     def forward(self, distance, label):
-        # LABEL == 0 if the pair is positive, else 0
+        # LABEL == 0 if the pair is positive, else 1
         label = label.detach()
         pos = (1-label) * pow(distance, 2)
         neg = (label) * torch.pow(torch.clamp(self.margin - distance, min=0.0), 2)
@@ -47,7 +47,7 @@ class SiameseNetwork(nn.Module):
 
        nn.Flatten(),
 
-       nn.Linear(in_features = 64*17*25, out_features = 10, bias = True),
+       nn.Linear(in_features = 64*17*25, out_features = 100, bias = True),
        #nn.ReLU(inplace=True),
 
        #nn.Linear(in_features=64, out_features=10, bias=True),

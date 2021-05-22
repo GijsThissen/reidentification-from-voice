@@ -8,7 +8,7 @@ import itertools
 
 
 class Reidentification_From_Voice(Dataset):
-    def __init__(self, data_path, preprocessing_function, deviceid):
+    def __init__(self, data_path, preprocessing_function, with_index, deviceid):
         with open(data_path, 'rb') as handle:
             self.data = pickle.load(handle)
 
@@ -18,6 +18,9 @@ class Reidentification_From_Voice(Dataset):
         self.total_pairs = len(self.training_pairs)
         self.deviceid = deviceid
         self.preprocessing_function = preprocessing_function
+        self.with_index = with_index
+        self.distance_matrix = np.empty((self.data[1].shape[0], self.data[1].shape[0]))
+        self.labels = self.data[1]
 
 
 
@@ -64,7 +67,7 @@ class Reidentification_From_Voice(Dataset):
             rec_1 = rec_1.reshape(1, rec_1.shape[0], rec_1.shape[1]).cuda()
 
             label = 0 if id_0 == id_1 else 1
-            label = torch.cuda.FloatTensor(label)
+            label = torch.cuda.FloatTensor([label])
 
 
         # print(rec_0.shape)
@@ -72,7 +75,12 @@ class Reidentification_From_Voice(Dataset):
         # print(lbl_0)
         # print(lbl_1)
         # print(label)
-        return rec_0, rec_1, label
+        if self.with_index:
+
+            return rec_0, rec_1, label, (idx_0, idx_1)
+
+        else:
+            return rec_0, rec_1, label
 
     def __len__(self):
         return self.total_pairs
@@ -80,8 +88,8 @@ class Reidentification_From_Voice(Dataset):
 
 class DataLD(object):
 
-    def __init__(self, data_path, preprocessing_function, deviceid = -1):
-        self.dataset = Reidentification_From_Voice(data_path, preprocessing_function, deviceid)
+    def __init__(self, data_path, preprocessing_function, with_index = False, deviceid = -1):
+        self.dataset = Reidentification_From_Voice(data_path, preprocessing_function, with_index, deviceid)
 
     def get_loader(self, shuf= True, batch_size = 80):
 
@@ -89,3 +97,7 @@ class DataLD(object):
                                  batch_size = batch_size,
                                  shuffle=shuf)
         return data_loader
+
+    def get_distance_matrix(self):
+
+        return self.dataset.distance_matrix, self.dataset.labels
