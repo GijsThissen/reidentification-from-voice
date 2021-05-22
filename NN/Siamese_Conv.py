@@ -14,6 +14,7 @@ class ContrastiveLoss(nn.Module):
 
     def forward(self, distance, label):
         # LABEL == 0 if the pair is positive, else 0
+        label = label.detach()
         pos = (1-label) * pow(distance, 2)
         neg = (label) * torch.pow(torch.clamp(self.margin - distance, min=0.0), 2)
         loss_contrastive = torch.mean( pos + neg )

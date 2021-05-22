@@ -48,8 +48,14 @@ class Reidentification_From_Voice(Dataset):
             label = 0 if id_0 == id_1 else 1
         else:
 
-            rec_0 = torch.from_numpy(self.data[0][idx_0]).cuda()
-            rec_1 = torch.from_numpy(self.data[0][idx_1]).cuda()
+            rec_0 = torch.from_numpy(self.data[0][idx_0])
+            rec_1 = torch.from_numpy(self.data[0][idx_1])
+
+            # rec_0 = torch.from_numpy(self.data[0][idx_0]).cuda()
+            # rec_1 = torch.from_numpy(self.data[0][idx_1]).cuda()
+
+            # rec_0 = self.preprocessing_function.forward(rec_0)
+            # rec_1 = self.preprocessing_function.forward(rec_1)
 
             rec_0 = self.preprocessing_function.forward(rec_0).cuda()
             rec_1 = self.preprocessing_function.forward(rec_1).cuda()
@@ -58,6 +64,7 @@ class Reidentification_From_Voice(Dataset):
             rec_1 = rec_1.reshape(1, rec_1.shape[0], rec_1.shape[1]).cuda()
 
             label = 0 if id_0 == id_1 else 1
+            label = torch.cuda.FloatTensor(label)
 
 
         # print(rec_0.shape)
