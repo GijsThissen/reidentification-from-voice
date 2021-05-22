@@ -35,6 +35,7 @@ def train(train_data, batch_size,
         #EVAL HERE
 
 
+
 def train_epoch( model, train_data,
                  loss_function, optimzer,
                  batch_size, epoch, deviceid):
